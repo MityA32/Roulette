@@ -1,19 +1,18 @@
 //
-//  ViewController.swift
+//  SettingsViewController.swift
 //  Roulette
 //
-//  Created by Dmytro Hetman on 14.08.2023.
+//  Created by Dmytro Hetman on 16.08.2023.
 //
 
 import UIKit
 
-class ViewController: UIViewController {
+class SettingsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         // Do any additional setup after loading the view.
     }
 
-
 }
-
