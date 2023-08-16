@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -17,7 +18,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         self.window = UIWindow(windowScene: scene)
         self.window!.backgroundColor = UIColor.clear
-        let navigationController = UINavigationController(rootViewController: LoginScreenViewController())
+        let appVC = Auth.auth().currentUser == nil ? LoginScreenViewController() : MainTabBarViewController()
+        let navigationController = UINavigationController(rootViewController: appVC)
         navigationController.navigationBar.isHidden = true
         self.window?.rootViewController = navigationController
         self.window?.makeKeyAndVisible()

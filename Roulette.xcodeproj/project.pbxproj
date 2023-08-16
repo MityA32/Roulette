@@ -25,6 +25,7 @@
 		93BFB6B32A8C4259007E2197 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFB6B22A8C4259007E2197 /* GameViewController.swift */; };
 		93BFB6B62A8C4286007E2197 /* RatingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFB6B52A8C4286007E2197 /* RatingViewController.swift */; };
 		93BFB6B92A8C42B0007E2197 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFB6B82A8C42B0007E2197 /* SettingsViewController.swift */; };
+		93BFB6BC2A8CFF2B007E2197 /* RouletteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFB6BB2A8CFF2B007E2197 /* RouletteModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		93BFB6B22A8C4259007E2197 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		93BFB6B52A8C4286007E2197 /* RatingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingViewController.swift; sourceTree = "<group>"; };
 		93BFB6B82A8C42B0007E2197 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		93BFB6BB2A8CFF2B007E2197 /* RouletteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouletteModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,13 +113,14 @@
 		93BFB6A62A8C30DB007E2197 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
-				93BFB6A72A8C30F2007E2197 /* MainTabBar */,
+				93BFB6BA2A8CFEFB007E2197 /* Model */,
+				93BFB6A72A8C30F2007E2197 /* MainTabBarWithItems */,
 				93BFB6A22A8BD5A6007E2197 /* LoginScreen */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
 		};
-		93BFB6A72A8C30F2007E2197 /* MainTabBar */ = {
+		93BFB6A72A8C30F2007E2197 /* MainTabBarWithItems */ = {
 			isa = PBXGroup;
 			children = (
 				93BFB6B02A8C4239007E2197 /* Settings */,
@@ -126,7 +129,7 @@
 				93BFB6AA2A8C4150007E2197 /* Model */,
 				93BFB6A82A8C3D2E007E2197 /* MainTabBarViewController.swift */,
 			);
-			path = MainTabBar;
+			path = MainTabBarWithItems;
 			sourceTree = "<group>";
 		};
 		93BFB6AA2A8C4150007E2197 /* Model */ = {
@@ -183,6 +186,14 @@
 				93BFB6B82A8C42B0007E2197 /* SettingsViewController.swift */,
 			);
 			path = ViewController;
+			sourceTree = "<group>";
+		};
+		93BFB6BA2A8CFEFB007E2197 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				93BFB6BB2A8CFF2B007E2197 /* RouletteModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -268,6 +279,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				93BFB6B32A8C4259007E2197 /* GameViewController.swift in Sources */,
+				93BFB6BC2A8CFF2B007E2197 /* RouletteModel.swift in Sources */,
 				93BFB6B62A8C4286007E2197 /* RatingViewController.swift in Sources */,
 				93BFB6A92A8C3D2E007E2197 /* MainTabBarViewController.swift in Sources */,
 				93BFB6832A8AC825007E2197 /* MainViewController.swift in Sources */,
