@@ -6,12 +6,26 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class GameViewController: UIViewController {
     
+    
+    
+    var model: UserModel?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        setup()
     }
     
+    private func setup() {
+        
+        setupView()
+    }
+    
+    private func setupView() {
+//        setupHeaderView()
+    }
 }

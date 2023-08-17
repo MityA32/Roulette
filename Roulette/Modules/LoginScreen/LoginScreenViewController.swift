@@ -54,7 +54,7 @@ class LoginScreenViewController: UIViewController {
         return button
     }()
     
-    private let model = RouletteModel()
+    
     private var nicknameFromTextField = ""
     
     override func viewDidLoad() {
@@ -71,14 +71,10 @@ class LoginScreenViewController: UIViewController {
     private func setup() {
         setupView()
     }
-    
-    
-    
-    
-    
 }
 extension LoginScreenViewController {
     private func setupView() {
+        navigationController?.setNavigationBarHidden(true, animated: false)
         setupGetStartedState()
         setupEnterNicknameState()
        
@@ -99,6 +95,7 @@ extension LoginScreenViewController {
     }
     
     private func setupTextField() {
+        newNicknameTextField.delegate = self
         view.addSubview(newNicknameTextField)
         NSLayoutConstraint.activate([
             newNicknameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -121,14 +118,12 @@ extension LoginScreenViewController {
     }
     
     private func setupYourNicknameLabel() {
-        
         view.addSubview(enterNicknameLabel)
         NSLayoutConstraint.activate([
             enterNicknameLabel.heightAnchor.constraint(equalToConstant: 40),
             enterNicknameLabel.centerYAnchor.constraint(equalTo: newNicknameTextField.centerYAnchor, constant: -36),
             enterNicknameLabel.leadingAnchor.constraint(equalTo: newNicknameTextField.leadingAnchor, constant: 8)
         ])
-        
     }
     
     private func setupGetStartedButton() {
@@ -143,6 +138,7 @@ extension LoginScreenViewController {
     }
     
     private func setupRegisterButton() {
+        registerButton.isUserInteractionEnabled = true
         registerButton.addTarget(self, action: #selector(loginAnonymously), for: .touchUpInside)
         view.addSubview(registerButton)
         NSLayoutConstraint.activate([
@@ -177,7 +173,16 @@ extension LoginScreenViewController {
     }
     
     @objc private func loginAnonymously() {
-        
+        registerButton.isUserInteractionEnabled = false
+        if self.nicknameFromTextField.isEmpty || self.nicknameFromTextField.replacingOccurrences(of: " ", with: "").isEmpty {
+            let alertController = UIAlertController(title: "Alert", message: "Nickname cannot be empty!", preferredStyle: .alert)
+                    
+            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alertController.addAction(okAction)
+            
+            present(alertController, animated: true, completion: nil)
+            return
+        }
         Auth.auth().signInAnonymously { authResult, error in
             if let authResult {
                 let user = authResult.user
@@ -187,7 +192,8 @@ extension LoginScreenViewController {
                 if let user = Auth.auth().currentUser {
                     let authuid = user.uid
                     print("User with id \(authuid) is logged in")
-                    self.model.registerNewUser(with: uid, nickname: self.nicknameFromTextField)
+                    
+                    UserModel.registerNewUser(with: uid, nickname: self.nicknameFromTextField.trimmingCharacters(in: .whitespaces))
                     self.navigationController?.pushViewController(MainTabBarViewController(), animated: true)
                 } else {
                     print("User with id \(uid) is NOT logged in")
@@ -200,5 +206,10 @@ extension LoginScreenViewController {
 extension LoginScreenViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
         nicknameFromTextField = textField.text ?? ""
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
