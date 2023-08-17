@@ -10,7 +10,7 @@ import FirebaseAuth
 
 class GameViewController: UIViewController {
     
-    
+    private let innerBoardNumbersCollectionView = UICollectionView()
     
     var model: UserModel?
     
@@ -26,6 +26,6 @@ class GameViewController: UIViewController {
     }
     
     private func setupView() {
-//        setupHeaderView()
+
     }
 }

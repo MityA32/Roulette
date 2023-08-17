@@ -58,16 +58,7 @@ class MainTabBarViewController: UITabBarController {
     private func presentLoginScreen() {
         let loginScreenVC = LoginScreenViewController()
         loginScreenVC.onDismiss = {
-            guard let userID = Auth.auth().currentUser?.uid
-            else { return }
-            let userInfo = self.model.getUserInfoBy(
-              userID: userID,
-              completion: { [weak self] nickname, chipsNum, rating in
-                  guard let self else { return }
-                  header?.nicknameLabel.text = nickname
-                  header?.quantityOfChipsLabel.text = "\(chipsNum)"
-                  header?.quantityOfChipsLabel.addImage(imageName: "coins_icon")
-            })
+            self.getUserInfo()
         }
         let loginNavigationController = UINavigationController(rootViewController: loginScreenVC)
         loginNavigationController.modalPresentationStyle = .fullScreen
@@ -92,17 +83,8 @@ class MainTabBarViewController: UITabBarController {
     }
     
     private func setupHeaderView() {
-        guard let userID = Auth.auth().currentUser?.uid
-        else { return }
-        let userInfo = model.getUserInfoBy(
-          userID: userID,
-          completion: { [weak self] nickname, chipsNum, rating in
-              guard let self else { return }
-              header?.nicknameLabel.text = nickname
-              header?.quantityOfChipsLabel.text = "\(chipsNum)"
-              header?.quantityOfChipsLabel.addImage(imageName: "coins_icon")
-        })
-        print(userInfo)
+        getUserInfo()
+        
         header = CustomHeaderBar(labelText: "***", quantityOfChips: "*")
         guard let header else { return }
         view.addSubview(header)
@@ -120,5 +102,18 @@ class MainTabBarViewController: UITabBarController {
         ])
     }
 
+    private func getUserInfo() {
+        guard let userID = Auth.auth().currentUser?.uid
+        else { return }
+        let userInfo = model.getUserInfoBy(
+          userID: userID,
+          completion: { [weak self] nickname, chipsNum, rating in
+              guard let self else { return }
+              header?.nicknameLabel.text = nickname
+              header?.quantityOfChipsLabel.text = "\(chipsNum)"
+              header?.quantityOfChipsLabel.addImage(imageName: "coins_icon")
+        })
+        print(userInfo)
+    }
     
 }

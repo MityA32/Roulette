@@ -149,6 +149,7 @@
 		93BFB6AD2A8C4220007E2197 /* Game */ = {
 			isa = PBXGroup;
 			children = (
+				93BFB6C82A8EE3A1007E2197 /* Model */,
 				93BFB6BD2A8D4749007E2197 /* Views */,
 				93BFB6B12A8C4244007E2197 /* ViewController */,
 			);
@@ -227,6 +228,13 @@
 				93BFB6C42A8D89E8007E2197 /* SettingsOptionTableViewCell.swift */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		93BFB6C82A8EE3A1007E2197 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
