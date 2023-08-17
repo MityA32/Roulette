@@ -55,7 +55,7 @@ class SettingsOptionTableViewCell: UITableViewCell {
     
     @objc
     private func deleteAccount() {
-        
+        UserModel.deleteCurrentUserAccount(completion: { deleted in })
     }
     
     @objc

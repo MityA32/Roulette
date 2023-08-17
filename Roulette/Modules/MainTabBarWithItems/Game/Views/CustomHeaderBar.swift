@@ -28,7 +28,7 @@ class CustomHeaderBar: UIView {
     }
     
     private func setupView() {
-        backgroundColor = .green
+        backgroundColor = .systemGray2
         
         translatesAutoresizingMaskIntoConstraints = false
         profileImage.translatesAutoresizingMaskIntoConstraints = false

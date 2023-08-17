@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 
+
 class LoginScreenViewController: UIViewController {
     
     private let enterNicknameLabel: UILabel = {
@@ -43,6 +44,7 @@ class LoginScreenViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Get started", for: .normal)
         button.setTitleColor(.black, for: .normal)
+        button.backgroundColor = .white
         return button
     }()
     
@@ -51,16 +53,51 @@ class LoginScreenViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Register", for: .normal)
         button.setTitleColor(.black, for: .normal)
+        button.backgroundColor = .white
+        return button
+    }()
+    
+    private let existingAccountLabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "You have existing account on this device"
+        label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        label.textColor = .white
+        label.textAlignment = .center
+        label.numberOfLines = 2
+        return label
+    }()
+    
+    private let loginButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Login", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.backgroundColor = .white
         return button
     }()
     
     
     private var nicknameFromTextField = ""
+    private var hasExistingAccount = false
+    
+    var onDismiss: (() -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setup()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        registerButton.isUserInteractionEnabled = true
+        loginButton.isUserInteractionEnabled = true
+        UserModel.checkDeviceIDExists(deviceID: UserModel.deviceID(), completion: { [weak self] exists in
+            guard let self else { return }
+            self.hasExistingAccount = exists
+            exists ? self.setupLoginState() : self.setupEnterNicknameState()
+        })
     }
     
     override func viewDidLayoutSubviews() {
@@ -74,13 +111,11 @@ class LoginScreenViewController: UIViewController {
 }
 extension LoginScreenViewController {
     private func setupView() {
+        view.backgroundColor = .black
         navigationController?.setNavigationBarHidden(true, animated: false)
         setupGetStartedState()
-        setupEnterNicknameState()
-       
-        self.enterNicknameLabel.transform = CGAffineTransform(translationX: self.view.frame.width, y: 0)
-        self.newNicknameTextField.transform = CGAffineTransform(translationX: self.view.frame.width, y: 0)
-        self.registerButton.transform = CGAffineTransform(translationX: self.view.frame.width, y: 0)
+        print(UserModel.deviceID())
+        
     }
     
     private func setupGetStartedState() {
@@ -89,9 +124,21 @@ extension LoginScreenViewController {
     }
     
     private func setupEnterNicknameState() {
+        self.enterNicknameLabel.transform = CGAffineTransform(translationX: self.view.frame.width, y: 0)
+        self.newNicknameTextField.transform = CGAffineTransform(translationX: self.view.frame.width, y: 0)
+        self.registerButton.transform = CGAffineTransform(translationX: self.view.frame.width, y: 0)
         setupTextField()
         setupYourNicknameLabel()
-        setupRegisterButton()
+        setupAuth(button: registerButton, of: .register)
+    }
+    
+    private func setupLoginState() {
+        self.existingAccountLabel.transform = CGAffineTransform(translationX: self.view.frame.width, y: 0)
+        self.loginButton.transform = CGAffineTransform(translationX: self.view.frame.width, y: 0)
+        setupExistingAccountLabel()
+        setupAuth(button: loginButton, of: .login)
+        
+        
     }
     
     private func setupTextField() {
@@ -137,16 +184,38 @@ extension LoginScreenViewController {
         ])
     }
     
-    private func setupRegisterButton() {
-        registerButton.isUserInteractionEnabled = true
-        registerButton.addTarget(self, action: #selector(loginAnonymously), for: .touchUpInside)
-        view.addSubview(registerButton)
+    private func setupExistingAccountLabel() {
+        view.addSubview(existingAccountLabel)
+        
         NSLayoutConstraint.activate([
-            registerButton.heightAnchor.constraint(equalToConstant: 44),
-            registerButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
-            registerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            registerButton.topAnchor.constraint(equalTo: newNicknameTextField.bottomAnchor, constant: 32)
+            existingAccountLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            existingAccountLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            existingAccountLabel.heightAnchor.constraint(equalToConstant: 80),
+            existingAccountLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8)
         ])
+    }
+    
+    private func setupAuth(button: UIButton, of type: AuthButtonType) {
+        button.isUserInteractionEnabled = true
+        switch type {
+        case .register:
+            button.addTarget(self, action: #selector(registerAnonymously), for: .touchUpInside)
+        case .login:
+            button.addTarget(self, action: #selector(loginAnonymously), for: .touchUpInside)
+        }
+        
+        view.addSubview(button)
+        NSLayoutConstraint.activate([
+            button.heightAnchor.constraint(equalToConstant: 44),
+            button.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
+        switch type {
+        case .register:
+            button.topAnchor.constraint(equalTo: newNicknameTextField.bottomAnchor, constant: 32).isActive = true
+        case .login:
+            button.topAnchor.constraint(equalTo: existingAccountLabel.bottomAnchor, constant: 32).isActive = true
+        }
     }
     
     private func setupButtonsLayer() {
@@ -155,24 +224,35 @@ extension LoginScreenViewController {
         
         registerButton.layer.cornerRadius = getStartedButton.frame.height / 4
         registerButton.backgroundColor = .white
+        
+        loginButton.layer.cornerRadius = getStartedButton.frame.height / 4
+        loginButton.backgroundColor = .white
     }
 }
 
 extension LoginScreenViewController {
     @objc private func getStarted() {
-        UIView.animate(withDuration: 0.5) {
+        UIView.animate(withDuration: 0.5) { [weak self] in
+            guard let self else { return }
             self.getStartedButton.transform = CGAffineTransform(translationX: -self.view.frame.width, y: 0)
             self.mainLabel.transform = CGAffineTransform(translationX: -self.view.frame.width, y: 0)
-            self.enterNicknameLabel.transform = .identity
-            self.newNicknameTextField.transform = .identity
-            self.registerButton.transform = .identity
+//            if self.hasExistingAccount {
+                self.existingAccountLabel.transform = .identity
+                self.loginButton.transform = .identity
+                
+//            } else {
+                self.enterNicknameLabel.transform = .identity
+                self.newNicknameTextField.transform = .identity
+                self.registerButton.transform = .identity
+//            }
+            
         } completion: { _ in
             self.getStartedButton.removeFromSuperview()
             self.mainLabel.removeFromSuperview()
         }
     }
     
-    @objc private func loginAnonymously() {
+    @objc private func registerAnonymously() {
         registerButton.isUserInteractionEnabled = false
         if self.nicknameFromTextField.isEmpty || self.nicknameFromTextField.replacingOccurrences(of: " ", with: "").isEmpty {
             let alertController = UIAlertController(title: "Alert", message: "Nickname cannot be empty!", preferredStyle: .alert)
@@ -193,14 +273,77 @@ extension LoginScreenViewController {
                     let authuid = user.uid
                     print("User with id \(authuid) is logged in")
                     
-                    UserModel.registerNewUser(with: uid, nickname: self.nicknameFromTextField.trimmingCharacters(in: .whitespaces))
-                    self.navigationController?.pushViewController(MainTabBarViewController(), animated: true)
+                    UserModel.registerNewUser(with: uid, nickname: self.nicknameFromTextField.trimmingCharacters(in: .whitespaces)) { _ in }
+                    self.dismiss(animated: true) {
+                        guard let onDismiss = self.onDismiss else { return }
+                        onDismiss()
+                    }
+
                 } else {
                     print("User with id \(uid) is NOT logged in")
                 }
             }
         }
     }
+    
+    @objc private func loginAnonymously() {
+        // Disable the button interaction to prevent multiple taps
+        loginButton.isUserInteractionEnabled = false
+        
+        // Sign in anonymously
+        Auth.auth().signInAnonymously { [weak self] authResult, error in
+            guard let self = self, let authResult = authResult else {
+                // Handle error and re-enable button interaction if needed
+                self?.loginButton.isUserInteractionEnabled = true
+                return
+            }
+            
+            let user = authResult.user
+            let uid = user.uid
+            print("Logged in with UID: \(uid)")
+            
+            // Now you have a signed-in user, you can proceed with further operations
+            self.loginToExistingAccount(uid: uid)
+            
+            // Re-enable the button interaction
+            self.loginButton.isUserInteractionEnabled = true
+        }
+    }
+
+    private func loginToExistingAccount(uid: String) {
+        UserModel.loginByExisting(deviceID: UserModel.deviceID(), completion: { [weak self] userDict, loggedIn in
+            guard let self = self, loggedIn else {
+                // Handle failed login if needed
+                return
+            }
+            
+            // Extract user data from userDict
+            if let name = userDict["nickname"] as? String,
+               let quantityOfChips = userDict["quantityOfChips"] as? Int,
+               let rating = userDict["rating"] as? Int {
+                
+                // Register user if needed
+                UserModel.registerNewUser(
+                    with: uid,
+                    nickname: name,
+                    quantityOfChips: quantityOfChips,
+                    rating: rating
+                ) { _ in
+                    // Handle completion if needed
+                }
+                
+                // Navigate to the next screen
+                self.dismiss(animated: true) {
+                    guard let onDismiss = self.onDismiss else { return }
+                    onDismiss()
+                }
+            }
+        })
+    }
+
+
+
+    
 }
 
 extension LoginScreenViewController: UITextFieldDelegate {

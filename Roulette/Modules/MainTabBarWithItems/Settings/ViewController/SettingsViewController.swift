@@ -26,6 +26,7 @@ class SettingsViewController: UIViewController {
     }
     
     private func setupView() {
+        view.backgroundColor = .systemBackground
         setupTableView()
     }
     

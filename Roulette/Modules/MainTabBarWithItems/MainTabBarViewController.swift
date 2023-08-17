@@ -10,24 +10,68 @@ import FirebaseAuth
 
 class MainTabBarViewController: UITabBarController {
     
+    private let aboveHeaderView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray2
+        return view
+    }()
     
     private var header: CustomHeaderBar?
+    private var authStateDidChangeHandle: AuthStateDidChangeListenerHandle?
+
     var model = UserModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        setupHeaderView()
         
+        authStateDidChangeHandle = Auth.auth().addStateDidChangeListener { [weak self] (_, user) in
+            guard let self = self else { return }
+            if user == nil {
+                DispatchQueue.main.async {
+                    self.presentLoginScreen()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                        self.selectedIndex = 0
+                    })
+                    
+                }
+            }
+        }
+        if Auth.auth().currentUser == nil {
+            DispatchQueue.main.async {
+                self.presentLoginScreen()
+            }
+        }
     }
     
     
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        setupHeaderView()
         setupTabBar()
         
+    }
+    
+    private func presentLoginScreen() {
+        let loginScreenVC = LoginScreenViewController()
+        loginScreenVC.onDismiss = {
+            guard let userID = Auth.auth().currentUser?.uid
+            else { return }
+            let userInfo = self.model.getUserInfoBy(
+              userID: userID,
+              completion: { [weak self] nickname, chipsNum, rating in
+                  guard let self else { return }
+                  header?.nicknameLabel.text = nickname
+                  header?.quantityOfChipsLabel.text = "\(chipsNum)"
+                  header?.quantityOfChipsLabel.addImage(imageName: "coins_icon")
+            })
+        }
+        let loginNavigationController = UINavigationController(rootViewController: loginScreenVC)
+        loginNavigationController.modalPresentationStyle = .fullScreen
+        present(loginNavigationController, animated: false, completion: nil)
     }
     
     private func setupTabBar() {
@@ -58,14 +102,21 @@ class MainTabBarViewController: UITabBarController {
               header?.quantityOfChipsLabel.text = "\(chipsNum)"
               header?.quantityOfChipsLabel.addImage(imageName: "coins_icon")
         })
-        header = CustomHeaderBar(labelText: userInfo.0, quantityOfChips: userInfo.1)
+        print(userInfo)
+        header = CustomHeaderBar(labelText: "***", quantityOfChips: "*")
         guard let header else { return }
         view.addSubview(header)
+        view.addSubview(aboveHeaderView)
         
         NSLayoutConstraint.activate([
             header.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             header.widthAnchor.constraint(equalTo: view.widthAnchor),
-            header.heightAnchor.constraint(equalToConstant: 44)
+            header.heightAnchor.constraint(equalToConstant: 44),
+            
+            aboveHeaderView.topAnchor.constraint(equalTo: view.topAnchor),
+            aboveHeaderView.bottomAnchor.constraint(equalTo: header.topAnchor),
+            aboveHeaderView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            aboveHeaderView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
 
