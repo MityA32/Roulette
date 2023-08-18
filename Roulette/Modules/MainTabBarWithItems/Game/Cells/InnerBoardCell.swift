@@ -8,7 +8,6 @@
 import UIKit
 
 class InnerBoardCell: UICollectionViewCell {
-    // UI elements
     private let numberLabel = UILabel()
     
     override init(frame: CGRect) {
