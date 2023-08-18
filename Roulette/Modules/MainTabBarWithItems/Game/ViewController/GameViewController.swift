@@ -288,7 +288,7 @@ class GameViewController: UIViewController {
            
            leftBetButtonsStackView.axis = .vertical
            leftBetButtonsStackView.distribution = .fillEqually
-           leftBetButtonsStackView.alignment = .fill // Keep buttons' content aligned to fill
+           leftBetButtonsStackView.alignment = .fill
            leftBetButtonsStackView.spacing = 2
         view.addSubview(leftBetButtonsStackView)
         guard let innerBoardNumbersCollectionView else { return }
@@ -307,7 +307,7 @@ class GameViewController: UIViewController {
         
         bottomBetButtonsStackView.axis = .horizontal
         bottomBetButtonsStackView.distribution = .fillEqually
-        bottomBetButtonsStackView.alignment = .fill // Keep buttons' content aligned to fill
+        bottomBetButtonsStackView.alignment = .fill
         bottomBetButtonsStackView.spacing = 2
         
         view.addSubview(bottomBetButtonsStackView)
