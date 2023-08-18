@@ -59,6 +59,7 @@ class MainTabBarViewController: UITabBarController {
         let loginScreenVC = LoginScreenViewController()
         loginScreenVC.onDismiss = {
             self.getUserInfo()
+            
         }
         let loginNavigationController = UINavigationController(rootViewController: loginScreenVC)
         loginNavigationController.modalPresentationStyle = .fullScreen
@@ -84,7 +85,6 @@ class MainTabBarViewController: UITabBarController {
     
     private func setupHeaderView() {
         getUserInfo()
-        
         header = CustomHeaderBar(labelText: "***", quantityOfChips: "*")
         guard let header else { return }
         view.addSubview(header)

@@ -181,7 +181,7 @@ final class UserModel {
         }
     }
 
-    
+    @discardableResult
     func getUserInfoBy(userID: String, completion: @escaping (String, String, String) -> Void) -> (String, String, String) {
         let usersRef = ref.child("users").child(userID)
         var nicknameFromCurrent = ""
