@@ -43,6 +43,48 @@ final class UserModel {
         ref.child("users").child(uid).child("quantityOfChips").setValue(quantityOfChips)
     }
     
+    func addChips(_ amount: Int) {
+        quantityOfChips += amount
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        ref.child("users").child(uid).child("quantityOfChips").setValue(quantityOfChips)
+    }
+    
+    func addGame() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        ref.child("users").child(uid).child("totalGames").observeSingleEvent(of: .value, with: { snapshot in
+            if let totalGames = (snapshot.value as? Int) {
+                self.ref.child("users").child(uid).child("totalGames").setValue(totalGames + 1)
+            }
+        })
+    }
+    
+    func addWin() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        ref.child("users").child(uid).child("wonGames").observeSingleEvent(of: .value, with: { snapshot in
+            if let wonGames = (snapshot.value as? Int) {
+                self.ref.child("users").child(uid).child("wonGames").setValue(wonGames + 1)
+            }
+        })
+    }
+    
+    func updateWinrate() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+
+        let userRef = ref.child("users").child(uid)
+
+        userRef.child("totalGames").observeSingleEvent(of: .value, with: { totalGamesSnapshot in
+            guard let totalGames = totalGamesSnapshot.value as? Int else { return }
+
+            userRef.child("wonGames").observeSingleEvent(of: .value, with: { wonGamesSnapshot in
+                guard let wonGames = wonGamesSnapshot.value as? Int else { return }
+
+                let winRate = Double(wonGames) / Double(totalGames)
+                userRef.child("winRate").setValue(winRate)
+            })
+        })
+    }
+
+    
     static func checkDeviceIDExists(deviceID: String, completion: @escaping (Bool) -> Void) {
         let ref = Database.database().reference()
         let usersRef = ref.child("users")
@@ -140,7 +182,7 @@ final class UserModel {
 
 
     
-    static func registerNewUser(with id: String, nickname: String, quantityOfChips: Int = 2000, winRate: Double = 0, completion: @escaping (Bool) -> Void) {
+    static func registerNewUser(with id: String, nickname: String, quantityOfChips: Int = 2000, winRate: Double = 0, totalGames: Int = 0, wonGames: Int = 0,completion: @escaping (Bool) -> Void) {
         let ref = Database.database().reference()
         let userRef = ref.child("users").child(id)
         
@@ -148,7 +190,9 @@ final class UserModel {
             "nickname": nickname,
             "quantityOfChips": quantityOfChips,
             "winRate": winRate,
-            "deviceID": deviceID()
+            "deviceID": deviceID(),
+            "totalGames": totalGames,
+            "wonGames": wonGames
         ] as [String: Any]
         
         let usersRef = ref.child("users")

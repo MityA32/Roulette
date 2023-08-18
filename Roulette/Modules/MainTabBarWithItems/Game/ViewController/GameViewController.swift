@@ -144,8 +144,22 @@ class GameViewController: UIViewController {
     
     let betZeroView = RouletteZeroView()
     let setBetView = SetBetView()
+    let betsLabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.numberOfLines = 0
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
     
-    var model: UserModel?
+    
+    var model: UserModel? {
+        didSet {
+            
+        }
+    }
     private let betManager = BetManager()
     
     override func viewDidLoad() {
@@ -174,10 +188,13 @@ class GameViewController: UIViewController {
         betManager.userModel = model
         betManager.delegate = self
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        model?.getUserInfoBy(userID: uid, completion: { [weak self] currentUserNickname, quantityOfChips, rating in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             guard let self else { return }
-            setBetView.setupStepper(by: quantityOfChips)
-        })
+            guard let model = self.model else { return }
+            self.setBetView.setupStepper(by: model.quantityOfChips)
+        }
+        
+        
         
         setupView()
     }
@@ -189,6 +206,18 @@ class GameViewController: UIViewController {
         setupRightBetButtons()
         setupLeftBetButtons()
         setupBottomBetButtons()
+        setupBetsLabel()
+    }
+    
+    private func setupBetsLabel() {
+        view.addSubview(betsLabel)
+        NSLayoutConstraint.activate([
+            betsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            betsLabel.topAnchor.constraint(equalTo: bottomBetButtonsStackView.topAnchor),
+            betsLabel.trailingAnchor.constraint(equalTo: bottomBetButtonsStackView.leadingAnchor, constant: -16),
+            betsLabel.bottomAnchor.constraint(equalTo: setBetView.topAnchor, constant: -10)
+        
+        ])
     }
     
     private func setupPlaceholder() {
@@ -409,5 +438,6 @@ extension GameViewController {
     
     @objc private func startRoulette() {
         betManager.startRoulette()
+        model?.addGame()
     }
 }

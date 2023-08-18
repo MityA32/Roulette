@@ -83,7 +83,7 @@ class UserCell: UITableViewCell {
         profileImage.image = UIImage(systemName: "person.circle")
         nicknameLabel.text = user.nickname
         quantityOfChipsLabel.text = "\(user.quantityOfChips)"
-        winRateLabel.text = "Win Rate: \(user.winRate)%"
+        winRateLabel.text = "Win Rate: \(round(user.winRate * 100))%"
     }
 }
 

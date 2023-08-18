@@ -41,19 +41,7 @@ class MainTabBarViewController: UITabBarController {
                 }
             }
         }
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let ref = model.ref.child("users").child(uid).child("quantityOfChips")
-                
-        // Add an observer to listen for value changes
-        databaseHandle = ref.observe(.value) { [weak self] snapshot in
-            guard let self else { return }
-            if let quantityOfChips = snapshot.value as? Int {
-                // Update your UI with the new value
-                self.header?.quantityOfChipsLabel.text = "\(quantityOfChips)"
-                self.header?.quantityOfChipsLabel.addImage(imageName: "coins_icon")
-                
-            }
-        }
+      
         
         if Auth.auth().currentUser == nil {
             DispatchQueue.main.async {
@@ -68,14 +56,23 @@ class MainTabBarViewController: UITabBarController {
         super.viewWillAppear(animated)
         setupHeaderView()
         setupTabBar()
-        
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let ref = model.ref.child("users").child(uid).child("quantityOfChips")
+                
+        databaseHandle = ref.observe(.value) { [weak self] snapshot in
+            guard let self else { return }
+            if let quantityOfChips = snapshot.value as? Int {
+                self.header?.quantityOfChipsLabel.text = "\(quantityOfChips)"
+                self.header?.quantityOfChipsLabel.addImage(imageName: "coins_icon")
+            }
+        }
     }
     
     private func presentLoginScreen() {
         let loginScreenVC = LoginScreenViewController()
         loginScreenVC.onDismiss = {
             self.getUserInfo()
-            
+            self.model = UserModel()
         }
         let loginNavigationController = UINavigationController(rootViewController: loginScreenVC)
         loginNavigationController.modalPresentationStyle = .fullScreen

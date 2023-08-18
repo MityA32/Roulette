@@ -29,10 +29,13 @@ final class BetManager {
         }
         guard let userModel else { return }
         userModel.reduceChips(value)
+        
         guard let delegate else { return }
+        delegate.betsLabel.text = (delegate.betsLabel.text ?? "") + "Value: \(value), bet: \(type.title); "
+        print(delegate.betsLabel.text)
         guard let uid = Auth.auth().currentUser?.uid else { return }
         let ref = userModel.ref.child("users").child(uid).child("quantityOfChips")
-
+        
         databaseHandle = ref.observe(.value) { [weak self] snapshot in
             guard let self else { return }
             if let quantityOfChips = snapshot.value as? Int {
@@ -46,69 +49,111 @@ final class BetManager {
     }
     
     func startRoulette() {
-        let alertController = UIAlertController(title: "Alert", message: "Roulette is running", preferredStyle: .alert)
         
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-        alertController.addAction(okAction)
-        
-        delegate?.present(alertController, animated: true, completion: nil)
         
         let randomRouletteNumber = Int.random(in: 0...36)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             guard let self else { return }
-            let alertController = UIAlertController(title: "Alert", message: "Roulette number is \(randomRouletteNumber). You have won \(calculateWinOrLose(by: randomRouletteNumber))", preferredStyle: .alert)
-                    
+            let wonChips = calculateWinOrLose(by: randomRouletteNumber)
+            var colorOfNumber = ""
+            guard let slot = Slot.slots.first(where: { $0.number == randomRouletteNumber }) else { return }
+            switch slot.color {
+            case .red:
+                colorOfNumber = "Red"
+            case .black:
+                colorOfNumber = "Black"
+            default:
+                colorOfNumber = "Green"
+            }
+            let alertController = UIAlertController(title: "Alert", message: "Roulette number is \(randomRouletteNumber)(\(colorOfNumber)). You have won \(wonChips)", preferredStyle: .alert)
+            userModel?.addChips(wonChips)
+            if wonChips > 0 {
+                userModel?.addWin()
+                userModel?.updateWinrate()
+            }
+            guard let delegate else { return  }
+            delegate.betsLabel.text = ""
             let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alertController.addAction(okAction)
-            delegate?.present(alertController, animated: true, completion: nil)
+            delegate.present(alertController, animated: true, completion: nil)
         }
         
     }
     
     func calculateWinOrLose(by rouletteNumber: Int) -> Int {
         prizeTotal = 0
+        print(bets)
         bets.forEach({ bet in
             switch bet.type {
-                case number(let num):
-                    if num == rouletteNumber {
-                        prizeTotal += bet.value * 35
-                    }
-                case zero:
-                    if rouletteNumber == 0 {
-                        prizeTotal += bet.value * 35
-                    }
-                case smallNumbers:
-                    if rouletteNumber >= 1 && rouletteNumber <= 18 {
-                        prizeTotal += bet.value * 2
-                    }
-                case bigNumbers:
-                    if rouletteNumber >= 19 && rouletteNumber <= 36 {
-                        prizeTotal += bet.value * 2
-                    }
-                case evenNumbers:
-                    if rouletteNumber % 2 == 0 {
-                        prizeTotal += bet.value * 2
-                    }
-                case oddNumbers:
-                    if rouletteNumber % 2 == 1 {
-                        prizeTotal += bet.value * 2
-                    }
-                case redNumbers:
-                    
-                case blackNumbers:
-                case firstDozen:
-                case secondDozen:
-                case thirdDozen:
-                case firstColumn:
-                case secondColumn:
-                case thirdColumn:
+            case .number(let num):
+                if num == rouletteNumber {
+                    prizeTotal += bet.value * 35
+                }
+            case .zero:
+                if rouletteNumber == 0 {
+                    prizeTotal += bet.value * 35
+                }
+            case .smallNumbers:
+                if rouletteNumber >= 1 && rouletteNumber <= 18 {
+                    prizeTotal += bet.value * 2
+                }
+            case .bigNumbers:
+                if rouletteNumber >= 19 && rouletteNumber <= 36 {
+                     prizeTotal += bet.value * 2
+                }
+            case .evenNumbers:
+                if rouletteNumber % 2 == 0 {
+                    prizeTotal += bet.value * 2
+                }
+            case .oddNumbers:
+                if rouletteNumber % 2 == 1 {
+                    prizeTotal += bet.value * 2
+                }
+            case .redNumbers:
+                if let slot = Slot.slots.first(where: { $0.number == rouletteNumber }),
+                   slot.color == .red {
+                    prizeTotal += bet.value * 2
+                }
+            case .blackNumbers:
+                if let slot = Slot.slots.first(where: { $0.number == rouletteNumber }),
+                   slot.color == .black {
+                    prizeTotal += bet.value * 2
+                }
+                
+            case .firstDozen:
+                if rouletteNumber >= 1 && rouletteNumber <= 12 {
+                    prizeTotal += bet.value * 3
+                }
+            case .secondDozen:
+                if rouletteNumber >= 13 && rouletteNumber <= 24 {
+                    prizeTotal += bet.value * 3
+                }
+            case .thirdDozen:
+                if rouletteNumber >= 25 && rouletteNumber <= 36 {
+                    prizeTotal += bet.value * 3
+                }
+            case .firstColumn:
+                if rouletteNumber % 3 == 1 {
+                    prizeTotal += bet.value * 3
+                }
+            case .secondColumn:
+                if rouletteNumber % 3 == 2 {
+                    prizeTotal += bet.value * 3
+                }
+            case .thirdColumn:
+                if rouletteNumber % 3 == 0 {
+                    prizeTotal += bet.value * 3
+                }
             }
             
         })
+        bets = []
         
         
         return prizeTotal
     }
+    
 }
 
 enum BetType: Equatable {
@@ -126,6 +171,41 @@ enum BetType: Equatable {
     case firstColumn
     case secondColumn
     case thirdColumn
+}
+
+extension BetType {
+    var title: String {
+        switch self {
+        case .number(let int):
+            return "\(int)"
+        case .zero:
+            return "\(0)(Zero)"
+        case .smallNumbers:
+            return "1-18"
+        case .bigNumbers:
+            return "19-36"
+        case .evenNumbers:
+            return "Even"
+        case .oddNumbers:
+            return "Odd"
+        case .redNumbers:
+            return "Red"
+        case .blackNumbers:
+            return "Black"
+        case .firstDozen:
+            return "1-12"
+        case .secondDozen:
+            return "13-24"
+        case .thirdDozen:
+            return "25-36"
+        case .firstColumn:
+            return "1st column"
+        case .secondColumn:
+            return "2nd column"
+        case .thirdColumn:
+            return "3rd column"
+        }
+    }
 }
 
 struct Bet {
