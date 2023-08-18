@@ -33,6 +33,8 @@ class SetBetView: UIView {
         return button
     }()
     
+    private(set) var initialBalance = 0
+    
     init() {
         super.init(frame: .zero)
         setup()
@@ -54,9 +56,10 @@ class SetBetView: UIView {
     }
     
     func setupStepper(by balance: Int) {
+        initialBalance = balance
         betStepper.minimumValue = 0
         betStepper.maximumValue = Double(balance)
-        betStepper.stepValue = Double(balance / 10)
+        betStepper.stepValue = Double(balance / 10) == 0 ? 1 : Double(balance / 10)
         betStepper.value = 0
         betStepper.addTarget(self, action: #selector(stepperValueChanged(_:)), for: .valueChanged)
 

@@ -36,6 +36,7 @@
 		93BFB6D62A8F20F2007E2197 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFB6D52A8F20F2007E2197 /* UserCell.swift */; };
 		93BFB6DA2A8F2C2D007E2197 /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFB6D92A8F2C2D007E2197 /* UIButton+Extension.swift */; };
 		93BFB6DC2A8F3730007E2197 /* BetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFB6DB2A8F3730007E2197 /* BetManager.swift */; };
+		93BFB6DE2A8F4F96007E2197 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFB6DD2A8F4F96007E2197 /* UIView+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +65,7 @@
 		93BFB6D52A8F20F2007E2197 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		93BFB6D92A8F2C2D007E2197 /* UIButton+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extension.swift"; sourceTree = "<group>"; };
 		93BFB6DB2A8F3730007E2197 /* BetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetManager.swift; sourceTree = "<group>"; };
+		93BFB6DD2A8F4F96007E2197 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -286,6 +288,7 @@
 			isa = PBXGroup;
 			children = (
 				93BFB6D92A8F2C2D007E2197 /* UIButton+Extension.swift */,
+				93BFB6DD2A8F4F96007E2197 /* UIView+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -387,6 +390,7 @@
 				93BFB6A52A8C212C007E2197 /* LoginScreenViewController.swift in Sources */,
 				93BFB6DA2A8F2C2D007E2197 /* UIButton+Extension.swift in Sources */,
 				93BFB6D12A8EFC00007E2197 /* Slot.swift in Sources */,
+				93BFB6DE2A8F4F96007E2197 /* UIView+Extension.swift in Sources */,
 				93BFB6812A8AC825007E2197 /* SceneDelegate.swift in Sources */,
 				93BFB6C72A8E61B8007E2197 /* AuthButtonType.swift in Sources */,
 				93BFB6AC2A8C415B007E2197 /* Tabs.swift in Sources */,

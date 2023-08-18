@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import Firebase
 
 class MainTabBarViewController: UITabBarController {
     
@@ -19,6 +20,7 @@ class MainTabBarViewController: UITabBarController {
     
     private var header: CustomHeaderBar?
     private var authStateDidChangeHandle: AuthStateDidChangeListenerHandle?
+    var databaseHandle: DatabaseHandle?
 
     var model = UserModel()
     
@@ -39,6 +41,20 @@ class MainTabBarViewController: UITabBarController {
                 }
             }
         }
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let ref = model.ref.child("users").child(uid).child("quantityOfChips")
+                
+        // Add an observer to listen for value changes
+        databaseHandle = ref.observe(.value) { [weak self] snapshot in
+            guard let self else { return }
+            if let quantityOfChips = snapshot.value as? Int {
+                // Update your UI with the new value
+                self.header?.quantityOfChipsLabel.text = "\(quantityOfChips)"
+                self.header?.quantityOfChipsLabel.addImage(imageName: "coins_icon")
+                
+            }
+        }
+        
         if Auth.auth().currentUser == nil {
             DispatchQueue.main.async {
                 self.presentLoginScreen()

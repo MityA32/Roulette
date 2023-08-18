@@ -15,8 +15,8 @@ final class UserModel {
     let ref = Database.database().reference()
     
     var currentUserNickname = ""
-    var quantityOfChips = ""
-    var winRate = ""
+    var quantityOfChips = 0
+    var winRate = 0.0
     
     init(currentUserNickname: String = "", quantityOfChips: String = "", rating: String = "") {
         guard let uid = Auth.auth().currentUser?.uid else { return }
@@ -31,9 +31,16 @@ final class UserModel {
             if let chipsNum = (snapshot.value as? Int),
                 chipsNum <= 0 {
                 self.ref.child("users").child(uid).child("quantityOfChips").setValue(100)
+                self.quantityOfChips = 100
             }
             
         })
+    }
+    
+    func reduceChips(_ amount: Int) {
+        quantityOfChips -= amount
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        ref.child("users").child(uid).child("quantityOfChips").setValue(quantityOfChips)
     }
     
     static func checkDeviceIDExists(deviceID: String, completion: @escaping (Bool) -> Void) {
@@ -175,20 +182,20 @@ final class UserModel {
     }
 
     @discardableResult
-    func getUserInfoBy(userID: String, completion: @escaping (String, String, String) -> Void) -> (String, String, String) {
+    func getUserInfoBy(userID: String, completion: @escaping (String, Int, Double) -> Void) -> (String, Int, Double) {
         let usersRef = ref.child("users").child(userID)
         var nicknameFromCurrent = ""
-        var quantityOfChipsFromCurrent = ""
-        var winRateFromCurrent = ""
+        var quantityOfChipsFromCurrent = 0
+        var winRateFromCurrent = 0.0
         usersRef.observeSingleEvent(of: .value) { (snapshot) in
             if let userDict = snapshot.value as? [String: Any] {
                 
                 guard let nickname = userDict["nickname"] as? String,
                       let quantityOfChips = userDict["quantityOfChips"] as? Int,
-                      let winRate = userDict["winRate"] as? Int else { return }
+                      let winRate = userDict["winRate"] as? Double else { return }
                 nicknameFromCurrent = nickname
-                quantityOfChipsFromCurrent = "\(quantityOfChips)"
-                winRateFromCurrent = "\(winRate)"
+                quantityOfChipsFromCurrent = quantityOfChips
+                winRateFromCurrent = winRate
                 completion(nicknameFromCurrent, quantityOfChipsFromCurrent, winRateFromCurrent)
             }
         }

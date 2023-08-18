@@ -24,14 +24,12 @@ class GameViewController: UIViewController {
         return view
     }()
     
-    private let betZeroView = RouletteZeroView()
-    private let setBetView = SetBetView()
-    
     private let firstColumnBetButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("2-1", for: .normal)
         button.backgroundColor = .green
+        button.isUserInteractionEnabled = true
         return button
     }()
     
@@ -40,6 +38,7 @@ class GameViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("2-1", for: .normal)
         button.backgroundColor = .green
+        button.isUserInteractionEnabled = true
         return button
     }()
     
@@ -48,6 +47,7 @@ class GameViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("2-1", for: .normal)
         button.backgroundColor = .green
+        button.isUserInteractionEnabled = true
         return button
     }()
     
@@ -61,6 +61,7 @@ class GameViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .green
+        button.isUserInteractionEnabled = true
         return button
     }()
     
@@ -68,6 +69,7 @@ class GameViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .green
+        button.isUserInteractionEnabled = true
         return button
     }()
     
@@ -75,6 +77,7 @@ class GameViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .green
+        button.isUserInteractionEnabled = true
         return button
     }()
     
@@ -89,6 +92,7 @@ class GameViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .green
+        button.isUserInteractionEnabled = true
         return button
     }()
     
@@ -96,6 +100,7 @@ class GameViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .green
+        button.isUserInteractionEnabled = true
         return button
     }()
     
@@ -103,6 +108,7 @@ class GameViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .green
+        button.isUserInteractionEnabled = true
         return button
     }()
     
@@ -110,6 +116,7 @@ class GameViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .green
+        button.isUserInteractionEnabled = true
         return button
     }()
     
@@ -117,6 +124,7 @@ class GameViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .red
+        button.isUserInteractionEnabled = true
         return button
     }()
     
@@ -124,6 +132,7 @@ class GameViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .black
+        button.isUserInteractionEnabled = true
         return button
     }()
     
@@ -132,6 +141,9 @@ class GameViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
+    
+    let betZeroView = RouletteZeroView()
+    let setBetView = SetBetView()
     
     var model: UserModel?
     private let betManager = BetManager()
@@ -159,12 +171,12 @@ class GameViewController: UIViewController {
     }
     
     private func setup() {
+        betManager.userModel = model
+        betManager.delegate = self
         guard let uid = Auth.auth().currentUser?.uid else { return }
         model?.getUserInfoBy(userID: uid, completion: { [weak self] currentUserNickname, quantityOfChips, rating in
             guard let self else { return }
-            
-            guard let balance = Int(quantityOfChips) else { return }
-            setBetView.setupStepper(by: balance)
+            setBetView.setupStepper(by: quantityOfChips)
         })
         
         setupView()
@@ -196,6 +208,8 @@ class GameViewController: UIViewController {
     }
     
     private func setupBetView() {
+        setBetView.startButton.addTarget(self, action: #selector(startRoulette), for: .touchUpInside)
+        
         view.addSubview(setBetView)
         NSLayoutConstraint.activate([
             setBetView.bottomAnchor.constraint(equalTo: tabBarPlaceholderView.topAnchor),
@@ -208,6 +222,10 @@ class GameViewController: UIViewController {
         rightBetButtonsStackView.addArrangedSubview(firstDozenBetButton)
         rightBetButtonsStackView.addArrangedSubview(secondDozenBetButton)
         rightBetButtonsStackView.addArrangedSubview(thirdDozenBetButton)
+        
+        firstDozenBetButton.addTarget(self, action: #selector(tappedFirstDozenBetButton), for: .touchUpInside)
+        secondDozenBetButton.addTarget(self, action: #selector(tappedSecondDozenBetButton), for: .touchUpInside)
+        thirdDozenBetButton.addTarget(self, action: #selector(tappedThirdDozenBetButton), for: .touchUpInside)
         
         rightBetButtonsStackView.axis = .vertical
         rightBetButtonsStackView.distribution = .fillEqually
@@ -231,12 +249,12 @@ class GameViewController: UIViewController {
         leftBetButtonsStackView.addArrangedSubview(oddBetButton)
         leftBetButtonsStackView.addArrangedSubview(bigNumbersBetButton)
         
-//        smallNumbersBetButton.addTarget(self, action: #selector(), for: .touchUpInside)
-//        evenBetButton.addTarget(self, action: #selector(), for: .touchUpInside)
-//        redBetButton.addTarget(self, action: #selector(), for: .touchUpInside)
-//        blackBetButton.addTarget(self, action: #selector(), for: .touchUpInside)
-//        oddBetButton.addTarget(self, action: #selector(), for: .touchUpInside)
-//        bigNumbersBetButton.addTarget(self, action: #selector(), for: .touchUpInside)
+        smallNumbersBetButton.addTarget(self, action: #selector(tappedSmallNumbersBetButton), for: .touchUpInside)
+        evenBetButton.addTarget(self, action: #selector(tappedEvenBetButton), for: .touchUpInside)
+        redBetButton.addTarget(self, action: #selector(tappedRedBetButton), for: .touchUpInside)
+        blackBetButton.addTarget(self, action: #selector(tappedBlackBetButton), for: .touchUpInside)
+        oddBetButton.addTarget(self, action: #selector(tappedOddBetButton), for: .touchUpInside)
+        bigNumbersBetButton.addTarget(self, action: #selector(tappedBigNumbersBetButton), for: .touchUpInside)
         
            
            leftBetButtonsStackView.axis = .vertical
@@ -281,6 +299,9 @@ class GameViewController: UIViewController {
     }
     
     private func setupZeroView() {
+        let tapOnZero = UITapGestureRecognizer(target: self, action: #selector(tappedZeroBetButton))
+        betZeroView.addGestureRecognizer(tapOnZero)
+        betZeroView.isUserInteractionEnabled = true
         view.addSubview(betZeroView)
         NSLayoutConstraint.activate([
             betZeroView.topAnchor.constraint(equalTo: headerPlaceholderView.bottomAnchor, constant: 16),
@@ -327,9 +348,7 @@ extension GameViewController: UICollectionViewDelegateFlowLayout, UICollectionVi
        
        let slot = Slot.slots[indexPath.row]
        cell.configure(with: slot)
-       
        return cell
-           
    }
    
    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -339,8 +358,56 @@ extension GameViewController: UICollectionViewDelegateFlowLayout, UICollectionVi
    }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(indexPath.row + 1)
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .number(indexPath.row + 1))
+        print(betManager.bets)
     }
     
         
+}
+
+extension GameViewController {
+    
+    @objc private func tappedSmallNumbersBetButton() {
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .smallNumbers)
+    }
+    @objc private func tappedEvenBetButton() {
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .evenNumbers)
+    }
+    @objc private func tappedRedBetButton() {
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .redNumbers)
+    }
+    @objc private func tappedBlackBetButton() {
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .blackNumbers)
+    }
+    @objc private func tappedOddBetButton() {
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .oddNumbers)
+    }
+    @objc private func tappedBigNumbersBetButton() {
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .bigNumbers)
+    }
+    @objc private func tappedFirstDozenBetButton() {
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .firstDozen)
+    }
+    @objc private func tappedSecondDozenBetButton() {
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .secondDozen)
+    }
+    @objc private func tappedThirdDozenBetButton() {
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .thirdDozen)
+    }
+    @objc private func tappedFirstColumnBetButton() {
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .firstColumn)
+    }
+    @objc private func tappedSecondColumnBetButton() {
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .secondColumn)
+    }
+    @objc private func tappedThirdColumnBetButton() {
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .thirdColumn)
+    }
+    @objc private func tappedZeroBetButton() {
+        betManager.bet(value: Int(setBetView.betStepper.value), type: .zero)
+    }
+    
+    @objc private func startRoulette() {
+        betManager.startRoulette()
+    }
 }
