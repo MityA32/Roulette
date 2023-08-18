@@ -320,14 +320,14 @@ extension LoginScreenViewController {
             // Extract user data from userDict
             if let name = userDict["nickname"] as? String,
                let quantityOfChips = userDict["quantityOfChips"] as? Int,
-               let rating = userDict["rating"] as? Int {
+               let winRate = userDict["winRate"] as? Double {
                 
                 // Register user if needed
                 UserModel.registerNewUser(
                     with: uid,
                     nickname: name,
                     quantityOfChips: quantityOfChips,
-                    rating: rating
+                    winRate: winRate
                 ) { _ in
                     // Handle completion if needed
                 }

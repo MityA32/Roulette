@@ -16,15 +16,15 @@ final class UserModel {
     
     var currentUserNickname = ""
     var quantityOfChips = ""
-    var rating = ""
+    var winRate = ""
     
     init(currentUserNickname: String = "", quantityOfChips: String = "", rating: String = "") {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        getUserInfoBy(userID: uid, completion: { [weak self] currentUserNickname, quantityOfChips, rating in
+        getUserInfoBy(userID: uid, completion: { [weak self] currentUserNickname, quantityOfChips, winRate in
             guard let self else { return }
             self.currentUserNickname = currentUserNickname
             self.quantityOfChips = quantityOfChips
-            self.rating = rating
+            self.winRate = winRate
             
         })
         ref.child("users").child(uid).child("quantityOfChips").observe(.value, with: { snapshot in
@@ -92,29 +92,23 @@ final class UserModel {
         }
     }
     
-    
-    // Function to delete the current user's account by their ID
+
     static func deleteCurrentUserAccount(completion: @escaping (Bool) -> Void) {
-        // Assuming you have access to the current user's ID
         guard let currentUserID = Auth.auth().currentUser?.uid else {
-            completion(false) // No logged-in user, cannot delete
+            completion(false)
             return
         }
         
-        // Get a reference to the Firebase database
         let ref = Database.database().reference()
         let usersRef = ref.child("users")
         
-        // Observe a single event for the "users" reference
         usersRef.observeSingleEvent(of: .value) { snapshot in
             var deleted = false
             
-            // Iterate through user snapshots
             for case let userSnapshot as DataSnapshot in snapshot.children {
                 if let userID = userSnapshot.key as? String,
                    userID == currentUserID {
                     
-                    // Remove the user data from the database
                     userSnapshot.ref.removeValue { error, _ in
                         if let error = error {
                             print("Error deleting user: \(error.localizedDescription)")
@@ -131,7 +125,7 @@ final class UserModel {
             }
             
             if !deleted {
-                completion(false) // Current user not found in database
+                completion(false)
             }
         }
     }
@@ -139,18 +133,17 @@ final class UserModel {
 
 
     
-    static func registerNewUser(with id: String, nickname: String, quantityOfChips: Int = 2000, rating: Int = 0, completion: @escaping (Bool) -> Void) {
+    static func registerNewUser(with id: String, nickname: String, quantityOfChips: Int = 2000, winRate: Double = 0, completion: @escaping (Bool) -> Void) {
         let ref = Database.database().reference()
         let userRef = ref.child("users").child(id)
         
         let userData = [
             "nickname": nickname,
             "quantityOfChips": quantityOfChips,
-            "rating": rating,
-            "deviceID": deviceID() // Assuming there's a function to retrieve the device ID
+            "winRate": winRate,
+            "deviceID": deviceID()
         ] as [String: Any]
         
-        // Check if there's a user with the same device ID
         let usersRef = ref.child("users")
         var deviceIDExists = false
         
@@ -165,7 +158,7 @@ final class UserModel {
             }
             
             if deviceIDExists {
-                completion(false) // User with the same device ID already exists
+                completion(false)
             } else {
                 userRef.setValue(userData) { (error, _) in
                     if let error = error {
@@ -174,7 +167,7 @@ final class UserModel {
                     } else {
                         print(userData)
                         print("User data set successfully")
-                        completion(true) // User registered successfully
+                        completion(true)
                     }
                 }
             }
@@ -186,20 +179,52 @@ final class UserModel {
         let usersRef = ref.child("users").child(userID)
         var nicknameFromCurrent = ""
         var quantityOfChipsFromCurrent = ""
-        var ratingFromCurrent = ""
+        var winRateFromCurrent = ""
         usersRef.observeSingleEvent(of: .value) { (snapshot) in
             if let userDict = snapshot.value as? [String: Any] {
                 
                 guard let nickname = userDict["nickname"] as? String,
                       let quantityOfChips = userDict["quantityOfChips"] as? Int,
-                      let rating = userDict["rating"] as? Int else { return }
+                      let winRate = userDict["winRate"] as? Int else { return }
                 nicknameFromCurrent = nickname
                 quantityOfChipsFromCurrent = "\(quantityOfChips)"
-                ratingFromCurrent = "\(rating)"
-                completion(nicknameFromCurrent, quantityOfChipsFromCurrent, ratingFromCurrent)
+                winRateFromCurrent = "\(winRate)"
+                completion(nicknameFromCurrent, quantityOfChipsFromCurrent, winRateFromCurrent)
             }
         }
-        return (nicknameFromCurrent, quantityOfChipsFromCurrent, ratingFromCurrent)
+        return (nicknameFromCurrent, quantityOfChipsFromCurrent, winRateFromCurrent)
+    }
+    
+    static func getAllUsers(completion: @escaping ([User]) -> Void) {
+        let ref = Database.database().reference()
+        let usersRef = ref.child("users")
+        
+        usersRef.observeSingleEvent(of: .value) { snapshot in
+            var users: [User] = []
+            
+            for userSnapshot in snapshot.children {
+                if let userSnapshot = userSnapshot as? DataSnapshot,
+                   let userDict = userSnapshot.value as? [String: Any],
+                   let nickname = userDict["nickname"] as? String,
+                   let quantityOfChips = userDict["quantityOfChips"] as? Int,
+                   let winRate = userDict["winRate"] as? Double {
+                    let user = User(nickname: nickname, quantityOfChips: quantityOfChips, winRate: winRate)
+                    users.append(user)
+                }
+            }
+            
+            
+            users.sort { $0.quantityOfChips > $1.quantityOfChips }
+            
+            completion(users)
+        }
     }
 
+
+}
+
+struct User {
+    var nickname: String
+    var quantityOfChips: Int
+    var winRate: Double
 }

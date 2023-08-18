@@ -25,7 +25,7 @@ class InnerBoardCell: UICollectionViewCell {
         contentView.backgroundColor = .white
         
         numberLabel.textAlignment = .center
-        numberLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        numberLabel.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         contentView.addSubview(numberLabel)
         
         // Set up constraints

@@ -23,8 +23,93 @@ class GameViewController: UIViewController {
         view.backgroundColor = .clear
         return view
     }()
+    
     private let betZeroView = RouletteZeroView()
     private let setBetView = SetBetView()
+    
+    private let firstColumnBetButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("1st column", for: .normal)
+        return button
+    }()
+    
+    private let secondColumnBetButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("2nd column", for: .normal)
+        return button
+    }()
+    
+    private let thirdColumnBetButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("3rd column", for: .normal)
+        return button
+    }()
+    
+    private let firstDozenBetButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("1st 12", for: .normal)
+        return button
+    }()
+    
+    private let secondDozenBetButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("2nd 12", for: .normal)
+        return button
+    }()
+    
+    private let thirdDozenBetButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("3rd 12", for: .normal)
+        return button
+    }()
+    
+    private let smallNumbersBetButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("1-18", for: .normal)
+        return button
+    }()
+    
+    private let bigNumbersBetButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("19-36", for: .normal)
+        return button
+    }()
+    
+    private let evenBetButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Even", for: .normal)
+        return button
+    }()
+    
+    private let oddBetButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Odd", for: .normal)
+        return button
+    }()
+    
+    private let redBetButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Red", for: .normal)
+        return button
+    }()
+    
+    private let blackBetButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Black", for: .normal)
+        return button
+    }()
     
     var model: UserModel?
     
@@ -82,18 +167,17 @@ class GameViewController: UIViewController {
     private func setupBoard() {
         setupZeroView()
         setupCollectionView()
+        
     }
     
     private func setupZeroView() {
         view.addSubview(betZeroView)
-        
-            
-            NSLayoutConstraint.activate([
-                betZeroView.topAnchor.constraint(equalTo: headerPlaceholderView.bottomAnchor, constant: 16),
-                betZeroView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-                betZeroView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4),
-                betZeroView.heightAnchor.constraint(equalToConstant: 44)
-            ])
+        NSLayoutConstraint.activate([
+            betZeroView.topAnchor.constraint(equalTo: headerPlaceholderView.bottomAnchor, constant: 16),
+            betZeroView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            betZeroView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4),
+            betZeroView.heightAnchor.constraint(equalToConstant: 44)
+        ])
     }
 }
 
@@ -144,7 +228,7 @@ extension GameViewController: UICollectionViewDelegateFlowLayout, UICollectionVi
        // Adjust the cell size based on your design
        let cellWidth = (collectionView.bounds.width - 3) / 3
        
-       return CGSize(width: cellWidth, height: cellWidth * 0.75)
+       return CGSize(width: cellWidth, height: cellWidth * 0.6)
    }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
