@@ -35,6 +35,7 @@
 		93BFB6D12A8EFC00007E2197 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFB6D02A8EFC00007E2197 /* Slot.swift */; };
 		93BFB6D62A8F20F2007E2197 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFB6D52A8F20F2007E2197 /* UserCell.swift */; };
 		93BFB6DA2A8F2C2D007E2197 /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFB6D92A8F2C2D007E2197 /* UIButton+Extension.swift */; };
+		93BFB6DC2A8F3730007E2197 /* BetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFB6DB2A8F3730007E2197 /* BetManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +63,7 @@
 		93BFB6D02A8EFC00007E2197 /* Slot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
 		93BFB6D52A8F20F2007E2197 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		93BFB6D92A8F2C2D007E2197 /* UIButton+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extension.swift"; sourceTree = "<group>"; };
+		93BFB6DB2A8F3730007E2197 /* BetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,6 +168,7 @@
 				93BFB6C82A8EE3A1007E2197 /* Model */,
 				93BFB6BD2A8D4749007E2197 /* Views */,
 				93BFB6B12A8C4244007E2197 /* ViewController */,
+				93BFB6DB2A8F3730007E2197 /* BetManager.swift */,
 			);
 			path = Game;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				93BFB6B32A8C4259007E2197 /* GameViewController.swift in Sources */,
 				93BFB6BF2A8D478A007E2197 /* CustomHeaderBar.swift in Sources */,
 				93BFB6BC2A8CFF2B007E2197 /* UserModel.swift in Sources */,
+				93BFB6DC2A8F3730007E2197 /* BetManager.swift in Sources */,
 				93BFB6CD2A8EF141007E2197 /* InnerBoardCell.swift in Sources */,
 				93BFB6D62A8F20F2007E2197 /* UserCell.swift in Sources */,
 				93BFB6B62A8C4286007E2197 /* RatingViewController.swift in Sources */,

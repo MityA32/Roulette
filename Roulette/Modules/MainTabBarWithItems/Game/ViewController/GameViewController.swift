@@ -30,93 +30,132 @@ class GameViewController: UIViewController {
     private let firstColumnBetButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("1st column", for: .normal)
+        button.setTitle("2-1", for: .normal)
+        button.backgroundColor = .green
         return button
     }()
     
     private let secondColumnBetButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("2nd column", for: .normal)
+        button.setTitle("2-1", for: .normal)
+        button.backgroundColor = .green
         return button
     }()
     
     private let thirdColumnBetButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("3rd column", for: .normal)
+        button.setTitle("2-1", for: .normal)
+        button.backgroundColor = .green
         return button
+    }()
+    
+    private let bottomBetButtonsStackView = {
+       let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
     }()
     
     private let firstDozenBetButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("1st 12", for: .normal)
+        button.backgroundColor = .green
         return button
     }()
     
     private let secondDozenBetButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("2nd 12", for: .normal)
+        button.backgroundColor = .green
         return button
     }()
     
     private let thirdDozenBetButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("3rd 12", for: .normal)
+        button.backgroundColor = .green
         return button
     }()
     
+    
+    private let rightBetButtonsStackView = {
+       let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stackView
+    }()
     private let smallNumbersBetButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("1-18", for: .normal)
+        button.backgroundColor = .green
         return button
     }()
     
     private let bigNumbersBetButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("19-36", for: .normal)
+        button.backgroundColor = .green
         return button
     }()
     
     private let evenBetButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Even", for: .normal)
+        button.backgroundColor = .green
         return button
     }()
     
     private let oddBetButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Odd", for: .normal)
+        button.backgroundColor = .green
         return button
     }()
     
     private let redBetButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Red", for: .normal)
+        button.backgroundColor = .red
         return button
     }()
     
     private let blackBetButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Black", for: .normal)
+        button.backgroundColor = .black
         return button
     }()
     
+    private let leftBetButtonsStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
     var model: UserModel?
+    private let betManager = BetManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.setNavigationBarHidden(true, animated: false)
         setup()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        guard let innerBoardNumbersCollectionView else { return }
+        innerBoardNumbersCollectionView.heightAnchor.constraint(equalToConstant: innerBoardNumbersCollectionView.collectionViewLayout.collectionViewContentSize.height).isActive = true
+        self.view.layoutIfNeeded()
+        firstDozenBetButton.setRotatedLabel(text: "1st 12")
+        secondDozenBetButton.setRotatedLabel(text: "2nd 12")
+        thirdDozenBetButton.setRotatedLabel(text: "3rd 12")
+        smallNumbersBetButton.setRotatedLabel(text: "1-18")
+        bigNumbersBetButton.setRotatedLabel(text: "19-36")
+        evenBetButton.setRotatedLabel(text: "Even")
+        oddBetButton.setRotatedLabel(text: "Odd")
+        redBetButton.setRotatedLabel(text: "Red")
+        blackBetButton.setRotatedLabel(text: "Black")
     }
     
     private func setup() {
@@ -135,8 +174,9 @@ class GameViewController: UIViewController {
         setupPlaceholder()
         setupBetView()
         setupBoard()
-        
-        
+        setupRightBetButtons()
+        setupLeftBetButtons()
+        setupBottomBetButtons()
     }
     
     private func setupPlaceholder() {
@@ -161,6 +201,76 @@ class GameViewController: UIViewController {
             setBetView.bottomAnchor.constraint(equalTo: tabBarPlaceholderView.topAnchor),
             setBetView.widthAnchor.constraint(equalTo: view.widthAnchor),
             setBetView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1)
+        ])
+    }
+    
+    private func setupRightBetButtons() {
+        rightBetButtonsStackView.addArrangedSubview(firstDozenBetButton)
+        rightBetButtonsStackView.addArrangedSubview(secondDozenBetButton)
+        rightBetButtonsStackView.addArrangedSubview(thirdDozenBetButton)
+        
+        rightBetButtonsStackView.axis = .vertical
+        rightBetButtonsStackView.distribution = .fillEqually
+        rightBetButtonsStackView.alignment = .fill
+        rightBetButtonsStackView.spacing = 2
+     view.addSubview(rightBetButtonsStackView)
+     guard let innerBoardNumbersCollectionView else { return }
+     NSLayoutConstraint.activate([
+        rightBetButtonsStackView.trailingAnchor.constraint(equalTo: innerBoardNumbersCollectionView.leadingAnchor, constant: -16),
+        rightBetButtonsStackView.topAnchor.constraint(equalTo: innerBoardNumbersCollectionView.topAnchor),
+        rightBetButtonsStackView.bottomAnchor.constraint(equalTo: innerBoardNumbersCollectionView.bottomAnchor),
+        rightBetButtonsStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.1)
+     ])
+    }
+    
+    private func setupLeftBetButtons() {
+        leftBetButtonsStackView.addArrangedSubview(smallNumbersBetButton)
+        leftBetButtonsStackView.addArrangedSubview(evenBetButton)
+        leftBetButtonsStackView.addArrangedSubview(redBetButton)
+        leftBetButtonsStackView.addArrangedSubview(blackBetButton)
+        leftBetButtonsStackView.addArrangedSubview(oddBetButton)
+        leftBetButtonsStackView.addArrangedSubview(bigNumbersBetButton)
+        
+//        smallNumbersBetButton.addTarget(self, action: #selector(), for: .touchUpInside)
+//        evenBetButton.addTarget(self, action: #selector(), for: .touchUpInside)
+//        redBetButton.addTarget(self, action: #selector(), for: .touchUpInside)
+//        blackBetButton.addTarget(self, action: #selector(), for: .touchUpInside)
+//        oddBetButton.addTarget(self, action: #selector(), for: .touchUpInside)
+//        bigNumbersBetButton.addTarget(self, action: #selector(), for: .touchUpInside)
+        
+           
+           leftBetButtonsStackView.axis = .vertical
+           leftBetButtonsStackView.distribution = .fillEqually
+           leftBetButtonsStackView.alignment = .fill // Keep buttons' content aligned to fill
+           leftBetButtonsStackView.spacing = 2
+        view.addSubview(leftBetButtonsStackView)
+        guard let innerBoardNumbersCollectionView else { return }
+        NSLayoutConstraint.activate([
+            leftBetButtonsStackView.trailingAnchor.constraint(equalTo: rightBetButtonsStackView.leadingAnchor, constant: -16),
+            leftBetButtonsStackView.topAnchor.constraint(equalTo: innerBoardNumbersCollectionView.topAnchor),
+            leftBetButtonsStackView.bottomAnchor.constraint(equalTo: innerBoardNumbersCollectionView.bottomAnchor),
+            leftBetButtonsStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.1)
+        ])
+    }
+    
+    private func setupBottomBetButtons() {
+        bottomBetButtonsStackView.addArrangedSubview(firstColumnBetButton)
+        bottomBetButtonsStackView.addArrangedSubview(secondColumnBetButton)
+        bottomBetButtonsStackView.addArrangedSubview(thirdColumnBetButton)
+        
+        bottomBetButtonsStackView.axis = .horizontal
+        bottomBetButtonsStackView.distribution = .fillEqually
+        bottomBetButtonsStackView.alignment = .fill // Keep buttons' content aligned to fill
+        bottomBetButtonsStackView.spacing = 2
+        
+        view.addSubview(bottomBetButtonsStackView)
+        guard let innerBoardNumbersCollectionView else { return }
+        NSLayoutConstraint.activate([
+            bottomBetButtonsStackView.trailingAnchor.constraint(equalTo: innerBoardNumbersCollectionView.trailingAnchor),
+            bottomBetButtonsStackView.topAnchor.constraint(equalTo: innerBoardNumbersCollectionView.bottomAnchor, constant: 10),
+            bottomBetButtonsStackView.leadingAnchor.constraint(equalTo: innerBoardNumbersCollectionView.leadingAnchor),
+            bottomBetButtonsStackView.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            bottomBetButtonsStackView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.1)
         ])
     }
     
@@ -204,19 +314,17 @@ extension GameViewController: UICollectionViewDelegateFlowLayout, UICollectionVi
             innerBoardNumbersCollectionView.topAnchor.constraint(equalTo: betZeroView.bottomAnchor),
             innerBoardNumbersCollectionView.widthAnchor.constraint(equalTo: betZeroView.widthAnchor),
             innerBoardNumbersCollectionView.trailingAnchor.constraint(equalTo: betZeroView.trailingAnchor),
-            innerBoardNumbersCollectionView.bottomAnchor.constraint(equalTo: setBetView.topAnchor)
+//
         ])
 }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-       // Return the number of segments on the inner board
-       return 36 // For example, 0-36
+       return 36
    }
    
    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "InnerBoardCell", for: indexPath) as! InnerBoardCell
        
-       // Configure the cell with number and color
        let slot = Slot.slots[indexPath.row]
        cell.configure(with: slot)
        
@@ -225,7 +333,6 @@ extension GameViewController: UICollectionViewDelegateFlowLayout, UICollectionVi
    }
    
    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-       // Adjust the cell size based on your design
        let cellWidth = (collectionView.bounds.width - 3) / 3
        
        return CGSize(width: cellWidth, height: cellWidth * 0.6)

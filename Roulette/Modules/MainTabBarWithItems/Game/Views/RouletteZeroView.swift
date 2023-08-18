@@ -43,7 +43,7 @@ class RouletteZeroView: UIView {
         guard let context = UIGraphicsGetCurrentContext() else { return }
         
         context.addPath(createZeroPath(in: rect))
-        context.setFillColor(UIColor.green.cgColor) // Set your desired color
+        context.setFillColor(UIColor.green.cgColor)
         context.fillPath()
     }
     

@@ -21,14 +21,11 @@ class InnerBoardCell: UICollectionViewCell {
     }
     
     private func setupUI() {
-        // Customize your cell appearance here
         contentView.backgroundColor = .white
         
         numberLabel.textAlignment = .center
         numberLabel.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         contentView.addSubview(numberLabel)
-        
-        // Set up constraints
         numberLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             numberLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
