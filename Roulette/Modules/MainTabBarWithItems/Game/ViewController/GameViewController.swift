@@ -305,7 +305,9 @@ class GameViewController: UIViewController {
         bottomBetButtonsStackView.distribution = .fillEqually
         bottomBetButtonsStackView.alignment = .fill
         bottomBetButtonsStackView.spacing = 2
-        
+        firstColumnBetButton.addTarget(self, action: #selector(tappedFirstColumnBetButton), for: .touchUpInside)
+        secondColumnBetButton.addTarget(self, action: #selector(tappedSecondColumnBetButton), for: .touchUpInside)
+        thirdColumnBetButton.addTarget(self, action: #selector(tappedThirdColumnBetButton), for: .touchUpInside)
         view.addSubview(bottomBetButtonsStackView)
         guard let innerBoardNumbersCollectionView else { return }
         NSLayoutConstraint.activate([
