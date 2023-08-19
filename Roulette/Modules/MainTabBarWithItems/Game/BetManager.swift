@@ -74,7 +74,26 @@ final class BetManager {
             }
             guard let delegate else { return  }
             delegate.betsLabel.text = ""
-            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            let okAction = UIAlertAction(title: "OK", style: .default) {_ in
+                guard let userModel = self.userModel else { return }
+                if userModel.quantityOfChips <= 0 {
+                    let alertPlusHundredController = UIAlertController(title: "Alert", message: "We see you have 0 chips. We give you 100 as a present.", preferredStyle: .alert)
+                    let okPlusHundredAction = UIAlertAction(title: "OK", style: .default) {_ in
+                        guard let uid = Auth.auth().currentUser?.uid else { return }
+                        
+                        userModel.ref.child("users").child(uid).child("quantityOfChips").observeSingleEvent(of: .value, with: { snapshot in
+                            if let chipsNum = (snapshot.value as? Int),
+                                chipsNum <= 0 {
+                                userModel.ref.child("users").child(uid).child("quantityOfChips").setValue(100)
+                                userModel.quantityOfChips = 100
+                            }
+                            
+                        })
+                    }
+                    alertPlusHundredController.addAction(okPlusHundredAction)
+                    delegate.present(alertPlusHundredController, animated: true)
+                }
+            }
             alertController.addAction(okAction)
             delegate.present(alertController, animated: true, completion: nil)
         }

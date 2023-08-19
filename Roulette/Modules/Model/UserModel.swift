@@ -27,14 +27,7 @@ final class UserModel {
             self.winRate = winRate
             
         })
-        ref.child("users").child(uid).child("quantityOfChips").observe(.value, with: { snapshot in
-            if let chipsNum = (snapshot.value as? Int),
-                chipsNum <= 0 {
-                self.ref.child("users").child(uid).child("quantityOfChips").setValue(100)
-                self.quantityOfChips = 100
-            }
-            
-        })
+       
     }
     
     func reduceChips(_ amount: Int) {

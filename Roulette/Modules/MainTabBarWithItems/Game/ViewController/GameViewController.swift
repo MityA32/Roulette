@@ -339,7 +339,6 @@ class GameViewController: UIViewController {
     }
     
     private func setupStepper() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             guard let self else { return }
             guard let model = self.model else { return }
