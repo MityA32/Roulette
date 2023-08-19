@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import Firebase
 
 class GameViewController: UIViewController {
     
@@ -161,6 +162,7 @@ class GameViewController: UIViewController {
         }
     }
     private let betManager = BetManager()
+    var databaseHandle: DatabaseHandle?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -187,14 +189,8 @@ class GameViewController: UIViewController {
     private func setup() {
         betManager.userModel = model
         betManager.delegate = self
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-            guard let self else { return }
-            guard let model = self.model else { return }
-            self.setBetView.setupStepper(by: model.quantityOfChips)
-        }
-        
-        
+        setupStepper()
+        setupStepperObserver()
         
         setupView()
     }
@@ -339,6 +335,30 @@ class GameViewController: UIViewController {
             betZeroView.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
+    
+    private func setupStepper() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            guard let self else { return }
+            guard let model = self.model else { return }
+            self.setBetView.setupStepper(by: model.quantityOfChips)
+            self.setBetView.betValueLabel.text = "Bet: 0"
+        }
+    }
+    
+    private func setupStepperObserver() {
+        guard let uid = Auth.auth().currentUser?.uid,
+        let model else { return }
+        let ref = model.ref.child("users").child(uid).child("quantityOfChips")
+                
+        databaseHandle = ref.observe(.value) { [weak self] snapshot in
+            guard let self else { return }
+            if let quantityOfChips = snapshot.value as? Int {
+                self.setBetView.setupStepper(by: quantityOfChips)
+                self.setBetView.betValueLabel.text = "Bet: 0"
+            }
+        }
+    }
 }
 
 extension GameViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource  {
@@ -439,5 +459,6 @@ extension GameViewController {
     @objc private func startRoulette() {
         betManager.startRoulette()
         model?.addGame()
+        setupStepper()
     }
 }

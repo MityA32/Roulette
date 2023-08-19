@@ -37,12 +37,9 @@ class MainTabBarViewController: UITabBarController {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
                         self.selectedIndex = 0
                     })
-                    
                 }
             }
         }
-      
-        
         if Auth.auth().currentUser == nil {
             DispatchQueue.main.async {
                 self.presentLoginScreen()
