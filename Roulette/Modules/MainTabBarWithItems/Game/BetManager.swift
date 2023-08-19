@@ -70,8 +70,8 @@ final class BetManager {
             userModel?.addChips(wonChips)
             if wonChips > 0 {
                 userModel?.addWin()
-                userModel?.updateWinrate()
             }
+            userModel?.updateWinrate()
             guard let delegate else { return  }
             delegate.betsLabel.text = ""
             let okAction = UIAlertAction(title: "OK", style: .default) {_ in

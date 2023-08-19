@@ -21,12 +21,13 @@ class RatingViewController: UIViewController, UITableViewDelegate, UITableViewDa
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        fetchUsersFromDatabase()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setup()
+        fetchUsersFromDatabase()
     }
     
     private func setup() {
