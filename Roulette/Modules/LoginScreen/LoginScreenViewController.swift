@@ -262,7 +262,9 @@ extension LoginScreenViewController {
                     let authuid = user.uid
                     print("User with id \(authuid) is logged in")
                     
-                    UserModel.registerNewUser(with: uid, nickname: self.nicknameFromTextField.trimmingCharacters(in: .whitespaces)) { _ in }
+                    UserModel.registerNewUser(with: uid, nickname: self.nicknameFromTextField.trimmingCharacters(in: .whitespaces)) { created in
+                        
+                    }
                     self.dismiss(animated: true) {
                         guard let onDismiss = self.onDismiss else { return }
                         onDismiss()

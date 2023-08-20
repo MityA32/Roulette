@@ -12,7 +12,7 @@ import Firebase
 class GameViewController: UIViewController {
     
     private var innerBoardNumbersCollectionView: UICollectionView?
-    private let headerPlaceholderView = {
+    let headerPlaceholderView = {
        let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .clear

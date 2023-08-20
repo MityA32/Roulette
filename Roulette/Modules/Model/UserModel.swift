@@ -175,7 +175,7 @@ final class UserModel {
 
 
     
-    static func registerNewUser(with id: String, nickname: String, quantityOfChips: Int = 2000, winRate: Double = 0, totalGames: Int = 0, wonGames: Int = 0,completion: @escaping (Bool) -> Void) {
+    static func registerNewUser(with id: String, nickname: String, quantityOfChips: Int = 2000, winRate: Double = 0, totalGames: Int = 0, wonGames: Int = 0, completion: @escaping (Bool) -> Void) {
         let ref = Database.database().reference()
         let userRef = ref.child("users").child(id)
         
@@ -187,7 +187,6 @@ final class UserModel {
             "totalGames": totalGames,
             "wonGames": wonGames
         ] as [String: Any]
-        
         let usersRef = ref.child("users")
         var deviceIDExists = false
         

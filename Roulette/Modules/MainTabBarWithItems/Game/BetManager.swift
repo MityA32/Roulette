@@ -32,12 +32,10 @@ final class BetManager {
         
         guard let delegate else { return }
         delegate.betsLabel.text = (delegate.betsLabel.text ?? "") + "Value: \(value), bet: \(type.title); "
-        print(delegate.betsLabel.text)
         guard let uid = Auth.auth().currentUser?.uid else { return }
         let ref = userModel.ref.child("users").child(uid).child("quantityOfChips")
         
         databaseHandle = ref.observe(.value) { [weak self] snapshot in
-            guard let self else { return }
             if let quantityOfChips = snapshot.value as? Int {
                 
                 delegate.setBetView.betStepper.maximumValue = Double(quantityOfChips)
