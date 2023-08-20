@@ -40,15 +40,11 @@ final class BetManager {
                 
                 delegate.setBetView.betStepper.maximumValue = Double(quantityOfChips)
                 delegate.setBetView.betStepper.stepValue = Double(quantityOfChips / 10) == 0 ? 1 : Double(quantityOfChips / 10)
-                
             }
         }
-        
     }
     
     func startRoulette() {
-        
-        
         let randomRouletteNumber = Int.random(in: 0...36)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
@@ -82,10 +78,13 @@ final class BetManager {
                         userModel.ref.child("users").child(uid).child("quantityOfChips").observeSingleEvent(of: .value, with: { snapshot in
                             if let chipsNum = (snapshot.value as? Int),
                                 chipsNum <= 0 {
-                                userModel.ref.child("users").child(uid).child("quantityOfChips").setValue(100)
+                                userModel.ref
+                                    .child("users")
+                                    .child(uid)
+                                    .child("quantityOfChips")
+                                    .setValue(100)
                                 userModel.quantityOfChips = 100
                             }
-                            
                         })
                     }
                     alertPlusHundredController.addAction(okPlusHundredAction)
@@ -95,7 +94,6 @@ final class BetManager {
             alertController.addAction(okAction)
             delegate.present(alertController, animated: true, completion: nil)
         }
-        
     }
     
     func calculateWinOrLose(by rouletteNumber: Int) -> Int {
