@@ -35,9 +35,8 @@ final class BetManager {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         let ref = userModel.ref.child("users").child(uid).child("quantityOfChips")
         
-        databaseHandle = ref.observe(.value) { [weak self] snapshot in
+        databaseHandle = ref.observe(.value) { snapshot in
             if let quantityOfChips = snapshot.value as? Int {
-                
                 delegate.setBetView.betStepper.maximumValue = Double(quantityOfChips)
                 delegate.setBetView.betStepper.stepValue = Double(quantityOfChips / 10) == 0 ? 1 : Double(quantityOfChips / 10)
             }
@@ -103,62 +102,61 @@ final class BetManager {
             switch bet.type {
             case .number(let num):
                 if num == rouletteNumber {
-                    prizeTotal += bet.value * 35
+                    prizeTotal += bet.value * bet.type.winRate
                 }
             case .zero:
                 if rouletteNumber == 0 {
-                    prizeTotal += bet.value * 35
+                    prizeTotal += bet.value * bet.type.winRate
                 }
             case .smallNumbers:
                 if rouletteNumber >= 1 && rouletteNumber <= 18 {
-                    prizeTotal += bet.value * 2
+                    prizeTotal += bet.value * bet.type.winRate
                 }
             case .bigNumbers:
                 if rouletteNumber >= 19 && rouletteNumber <= 36 {
-                     prizeTotal += bet.value * 2
+                     prizeTotal += bet.value * bet.type.winRate
                 }
             case .evenNumbers:
                 if rouletteNumber % 2 == 0 {
-                    prizeTotal += bet.value * 2
+                    prizeTotal += bet.value * bet.type.winRate
                 }
             case .oddNumbers:
                 if rouletteNumber % 2 == 1 {
-                    prizeTotal += bet.value * 2
+                    prizeTotal += bet.value * bet.type.winRate
                 }
             case .redNumbers:
                 if let slot = Slot.slots.first(where: { $0.number == rouletteNumber }),
                    slot.color == .red {
-                    prizeTotal += bet.value * 2
+                    prizeTotal += bet.value * bet.type.winRate
                 }
             case .blackNumbers:
                 if let slot = Slot.slots.first(where: { $0.number == rouletteNumber }),
                    slot.color == .black {
-                    prizeTotal += bet.value * 2
+                    prizeTotal += bet.value * bet.type.winRate
                 }
-                
             case .firstDozen:
                 if rouletteNumber >= 1 && rouletteNumber <= 12 {
-                    prizeTotal += bet.value * 3
+                    prizeTotal += bet.value * bet.type.winRate
                 }
             case .secondDozen:
                 if rouletteNumber >= 13 && rouletteNumber <= 24 {
-                    prizeTotal += bet.value * 3
+                    prizeTotal += bet.value * bet.type.winRate
                 }
             case .thirdDozen:
                 if rouletteNumber >= 25 && rouletteNumber <= 36 {
-                    prizeTotal += bet.value * 3
+                    prizeTotal += bet.value * bet.type.winRate
                 }
             case .firstColumn:
                 if rouletteNumber % 3 == 1 {
-                    prizeTotal += bet.value * 3
+                    prizeTotal += bet.value * bet.type.winRate
                 }
             case .secondColumn:
                 if rouletteNumber % 3 == 2 {
-                    prizeTotal += bet.value * 3
+                    prizeTotal += bet.value * bet.type.winRate
                 }
             case .thirdColumn:
                 if rouletteNumber % 3 == 0 {
-                    prizeTotal += bet.value * 3
+                    prizeTotal += bet.value * bet.type.winRate
                 }
             }
             
@@ -221,6 +219,18 @@ extension BetType {
             return "3rd column"
         }
     }
+    
+    var winRate: Int {
+        switch self {
+        case .number(_), .zero:
+            return 36
+        case .smallNumbers, .bigNumbers, .evenNumbers, .oddNumbers, .redNumbers, .blackNumbers:
+            return 2
+        case .firstDozen, .secondDozen, .thirdDozen, .firstColumn, .secondColumn, .thirdColumn:
+            return 3
+        }
+    }
+    
 }
 
 struct Bet {
