@@ -19,7 +19,7 @@ final class BetManager {
     var prizeTotal = 0
     
     func bet(value: Int, type: BetType) {
-        if let chips = userModel?.quantityOfChips, chips < value {
+        if let chips = userModel?.quantityOfChips, chips < value || value == 0 {
             return
         }
         if let existingBetIndex = bets.firstIndex(where: { $0.type == type }) {
